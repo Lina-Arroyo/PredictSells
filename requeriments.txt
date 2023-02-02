@@ -1,0 +1,4 @@
+joblib==1.2.0
+streamlit==1.17.0
+scikit-learn==1.1.2pan
+pandas==1.4.3cls
