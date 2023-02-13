@@ -1,19 +1,23 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
+from sklearn.linear_model import LinearRegression
+import modelo as modelo
 
-st.title('Future sells Olist')
+st.title(' 💲Future sells Olist 💲')
+
 st.markdown('This model predict the future sells for year in the ecommerce Olist')
 
-st.header('Future Sells')
-col1, col2 = st.columns(2)
-with col1:
-    st.text('Sepal characteristics')
-    sepal_l = st.slider('Sepal lenght (cm)', 1.0, 8.0, 0.5)
-    sepal_w = st.slider('Sepal width (cm)', 2.0, 4.4, 0.5)
-with col2:
-    st.text('Pepal characteristics')
-    petal_l = st.slider('Petal lenght (cm)', 1.0, 7.0, 0.5)
-    petal_w = st.slider('Petal width (cm)', 0.1, 2.5, 0.5)
+st.header('Calculate the future Sells 💰')
 
-st.button('Predict the future sells')
+#path = st.text_input('📥 Enter the CSV path to predict 📥', value="", max_chars=None, key=None, type="default",
+                      #help=None, autocomplete=None, on_change=None, 
+                      #args=None, kwargs=None, placeholder=None, disabled=False, label_visibility="visible")
+
+#sep = st.text_input('📥 Enter the CSV separator  📥', value="", max_chars=None, key=None, type="default",
+                      #help=None, autocomplete=None, on_change=None, 
+                      #args=None, kwargs=None, placeholder=None, disabled=False, label_visibility="visible")
+
+
+
+if st.button('Predict the future sells 👀'):
+    st.markdown('These are the future sells for the next six months on Olist:')
+    st.write(modelo.run_model(modelo.train, modelo.test, LinearRegression(), 'LinearRegression'))

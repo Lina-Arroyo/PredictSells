@@ -12,18 +12,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-import keras
-from keras.layers import Dense
-from keras.models import Sequential
-from keras.optimizers import Adam 
-from keras.callbacks import EarlyStopping
-from keras.utils import np_utils
-from keras.layers import LSTM
-from sklearn.model_selection import KFold, cross_val_score, train_test_split
+import app as app
 
-import pickle
-
-ventas= pd.read_csv(r'C:\Users\Lina_\OneDrive\Escritorio\ProyectoFinal\Semana 3\Datasets\VentasMensuales.csv', sep=';')
+ventas= pd.read_csv(r'C:\Users\Lina_\OneDrive\Escritorio\PrediccionVentas\Datasets\VentasMensuales.csv', sep=';')
 
 ventas.head(10)
 
@@ -62,11 +53,11 @@ def sales_per_day():
     fig, ax = plt.subplots(figsize=(7,4))
     plt.hist(ventasM.ventas, color='mediumblue')
     
-    ax.set(xlabel = "Sales Per day",
+    return ax.set(xlabel = "Sales Per day",
            ylabel = "Count",
            title = "Distrobution of Sales Per Day")
     
-sales_per_day()
+print(sales_per_day())
 
 # Average monthly sells
 
@@ -87,13 +78,12 @@ def time_plot(data, x_col, y_col, title):
     second.fecha = pd.to_datetime(second.fecha, format='%Y')
     sns.lineplot((second.fecha + datetime.timedelta(7*365/12)), y_col, data=second, ax=ax, color='red', label='Mean Sales')   
     
-    ax.set(xlabel = "fecha",
-           ylabel = "ventas",
-           title = title)
+    return ax.set(xlabel = "fecha",
+                  ylabel = "ventas",
+                  title = title)
     
-    sns.despine()
-
-time_plot(ventasM, 'fecha', 'ventas', 'Monthly Sales Before Diff Transformation')
+    
+print(time_plot(ventasM, 'fecha', 'ventas', 'Monthly Sales Before Diff Transformation'))
 
 #We create a copy dataframe where we will create a column that calculates the difference in monthly sales
 def get_diff(data):
@@ -103,7 +93,7 @@ def get_diff(data):
 
 stationary_df = get_diff(ventasM)
 
-time_plot(stationary_df, 'fecha', 'diferenciaVentas', 'Monthly Sales After Diff Transformation')
+print(time_plot(stationary_df, 'fecha', 'diferenciaVentas', 'Monthly Sales After Diff Transformation'))
 
 # Observing lags
 def plots(data, lags=None):
@@ -123,7 +113,7 @@ def plots(data, lags=None):
     sns.despine()
     plt.tight_layout()
 
-plots(stationary_df, lags=9)
+print(plots(stationary_df, lags=9))
 
 
 #We create a datafrae that will store the retrospective period of the model which is 4 months
@@ -199,7 +189,7 @@ def undo_scaling(y_pred, x_test, scaler_obj, lstm=False):
 
 def load_original_df():
     #load in original dataframe without scaling applied
-    original_df = pd.read_csv(r'C:\Users\Lina_\OneDrive\Escritorio\ProyectoFinal\Semana 3\Datasets\VentasMensuales2017.csv', sep=';')
+    original_df = pd.read_csv(r'C:\Users\Lina_\OneDrive\Escritorio\PrediccionVentas\Datasets\VentasMensuales2017.csv', sep = ';')
     original_df.fecha = original_df.fecha.apply(lambda x: str(x)[:-3])
     original_df = original_df.groupby('fecha')['ventas'].sum().reset_index()
     original_df.fecha = pd.to_datetime(original_df.fecha)
@@ -220,12 +210,12 @@ def predict_df(unscaled_predictions, original_df):
         result_dict['pred_value'] = int(unscaled_predictions[index][0] + act_sales[index])
         result_dict['fecha'] = sales_date[index+1]
         result_list.append(result_dict)
-        
+
     df_result = pd.DataFrame(result_list)
-    
+
     return df_result
 
-
+'''
 model_scores = {}
 
 def get_scores(unscaled_df, original_df, model_name):
@@ -234,11 +224,10 @@ def get_scores(unscaled_df, original_df, model_name):
     r2 = r2_score(original_df.ventas[-7:], unscaled_df.pred_value[-7:])
     model_scores[model_name] = [rmse, mae, r2]
 
-    print(f"RMSE: {rmse}")
-    print(f"MAE: {mae}")
-    print(f"R2 Score: {r2}")
+    return {f"RMSE: {rmse}",'\n' f"MAE: {mae}", '\n' f"R2 Score: {r2}"}
+'''
 
-
+'''
 def plot_results(results, original_df, model_name):
 
        fig, ax = plt.subplots(figsize=(15,5))
@@ -250,13 +239,10 @@ def plot_results(results, original_df, model_name):
        print('-----Results-----')
        print(results)
 
-       ax.set(xlabel = "fecha",
+       return ax.set(xlabel = "fecha",
               ylabel = "ventas",
-              title = f"{model_name} Sales Forecasting Prediction")
-
-       ax.legend()
-
-       sns.despine()
+              title = f"{model_name} Sales Forecasting Prediction"), ax.legend()
+'''
 
 
 def run_model(train_data, test_data, model, model_name):
@@ -271,10 +257,9 @@ def run_model(train_data, test_data, model, model_name):
     original_df = load_original_df()
     unscaled = undo_scaling(predictions, X_test, scaler_object)
     unscaled_df = predict_df(unscaled, original_df)
-      
-    get_scores(unscaled_df, original_df, model_name)
-    
-    plot_results(unscaled_df, original_df, model_name)
+
+    return(unscaled_df)
 
 
-regression = run_model(train, test, LinearRegression(), 'LinearRegression')
+res = run_model(train, test, LinearRegression(), 'LinearRegression')
+
