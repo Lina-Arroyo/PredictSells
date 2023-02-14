@@ -4,7 +4,7 @@ import modelo as modelo
 
 st.title(' 💲Future sells Olist 💲')
 
-st.markdown('This model predict the future sells for year in the ecommerce Olist')
+st.markdown('This model predict the future sells for year in the e-commerce Olist')
 
 st.header('Calculate the future Sells 💰')
 
